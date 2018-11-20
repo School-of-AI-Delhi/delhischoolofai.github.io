@@ -25,12 +25,13 @@
             :counter="200"
             clearable
         ></v-textarea>
-        <v-btn :disabled="!valid" @click="submit">Submit</v-btn>
+        <v-btn :disabled="!valid" @click="submit" color="primary">Submit</v-btn>
         <v-btn @click="reset">Reset</v-btn>
     </v-form>
 </template>
 
 <script>
+import db from '@/firebase/firebaseInit.js'
 export default {
     data() {
         return {
@@ -54,7 +55,17 @@ export default {
     methods: {
         submit() {
             if(this.$refs.form.validate()) {
-                console.log('Submitting your query...')
+                let query = {
+                    name: this.name,
+                    email: this.email,
+                    text: this.query,
+                    isRead: false,
+                    date: new Date().toLocaleDateString()
+                }
+                db.collection('queries').add(query).then(docRef => {
+                    alert('Your Query has been submitted successfully')
+                    this.$router.push('/')
+                })
             }
         },
         reset() {

@@ -1,32 +1,30 @@
 <template>
     <v-card>
-        <v-card-media>
-            <v-carousel>
-                <v-carousel-item v-for="(imageLink, index) in event.imageLinks" :key="index" :src="imageLink"></v-carousel-item>
-            </v-carousel>
-        </v-card-media>
         <v-card-title>
             <div class="event-title">
-                {{ event.title }}
+                {{ event.name }}
             </div>
         </v-card-title>
         <v-card-text>
             <div>
                 <div class="description">
-                    <span>Description</span>
-                    <p>{{ event.description }}</p>
+                    <span>Description:</span>
+                    <p>{{ event.desc }}</p>
                 </div>
                 <div class="venue">
                     <p><span>Venue:</span> {{ event.venue }}</p>
                 </div>
-                <div class="timing">
-                    <p><span>Timing:</span> {{ event.date }}</p>
+                <div class="date">
+                    <p><span>Date:</span> {{ event.date }}</p>
                 </div>
-                <div class="requirements">
-                    <span>Requirements:</span>
+                <div class="time">
+                    <p><span>Time:</span> {{ event.time }}</p>
+                </div>
+                <div class="prereqs">
+                    <span>Prerequisites:</span>
                     <v-layout align-center justify-center row fill-height>
-                        <v-flex xs12 sm6 md4 lg3 v-for="(requirement, index) in event.requirements" :key="index">
-                            {{ requirement }}
+                        <v-flex xs12 sm6 md4 lg3 v-for="(prereq, index) in event.prereqs" :key="index">
+                            {{ prereq }}
                         </v-flex>
                     </v-layout>
                 </div>
@@ -40,7 +38,7 @@
                             :key="index">
                         <v-flex sm3>
                             <div class="speaker-photo">
-                                <img :src="speaker.imageLink" :alt="`${speaker.name}\' photo`">
+                                <img :src="speaker.imageUrl" :alt="`${speaker.name}\' photo`">
                             </div>
                         </v-flex>
                         <v-flex sm4>
@@ -48,14 +46,23 @@
                                 <h3>{{ speaker.name }}</h3>
                             </div>
                             <div class="speaker-summary">
-                                <p>{{ speaker.summary }}</p>
+                                <p>{{ speaker.details }}</p>
                             </div>
                         </v-flex>
                         <v-flex sm5>
                             <div class="speaker-social-links">
                                 <div class="social-image">
-                                    <a :href="speaker.socialLink">
-                                        <img :src="`@/assets/${speaker.socialName}.png`" :alt="`${speaker.socialName} Icon`">
+                                    <a :href="speaker.facebookUrl" v-if="speaker.facebookUrl">
+                                        <!-- <img src="@/assets/facebook.png" alt="facebook icon"> -->
+                                    </a>
+                                    <a :href="speaker.twitterUrl" v-if="speaker.twitterUrl">
+                                        <!-- <img src="@/assets/twitter.png" alt="twitter icon"> -->
+                                    </a>
+                                    <a :href="speaker.githubUrl" v-if="speaker.githubUrl">
+                                        <!-- <img src="@/assets/github.png" alt="github icon"> -->
+                                    </a>
+                                    <a :href="speaker.linkedInUrl" v-if="speaker.linkedInUrl">
+                                        <!-- <img src="@/assets/linkedIn.png" alt="linkedIn icon"> -->
                                     </a>
                                 </div>
                             </div>
@@ -63,8 +70,9 @@
                     </v-layout>
                 </div>
             </div>
-            <v-divider></v-divider>
             <div>
+                <h3>Register</h3>
+                <v-divider></v-divider>
                 <v-form ref="form" v-model="valid">
                     <v-text-field
                         outline
@@ -82,7 +90,7 @@
                         required
                         clearable
                     ></v-text-field>                    
-                    <v-btn :disabled="!valid" @click="submit">Submit</v-btn>
+                    <v-btn :disabled="!valid" @click="register" color="primary">Register</v-btn>
                     <v-btn @click="reset">Reset</v-btn>
                 </v-form>
             </div>
@@ -91,6 +99,7 @@
 </template>
 
 <script>
+import db from '@/firebase/firebaseInit.js'
 export default {
     data() {
         return {
@@ -108,14 +117,30 @@ export default {
         }
     },
     methods: {
-        submit() {
+        register() {
             if(this.$refs.form.validate()) {
-                console.log('Submitting your query...')
+                let user = {
+                    name: this.name,
+                    email: this.email,
+                    date: new Date().toLocaleDateString(),
+                    eventId: this.$route.params.eventId
+                }
+                db.collection('registeredUsers').add(user).then(docRef => {
+                    alert('You have successfully registered for the event')
+                    this.$router.push('/')
+                })
             }
         },
         reset() {
             this.$refs.form.reset()
         }
+    },
+    created() {
+        db.collection('events').doc(this.$route.params.eventId).get().then(doc => {
+            if(doc.exists) {
+                this.event = doc.data()
+            }
+        })
     }
 }
 </script>

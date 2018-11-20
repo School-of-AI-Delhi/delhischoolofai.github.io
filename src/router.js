@@ -30,6 +30,11 @@ export default new Router({
       path: '/events',
       name: 'events',
       component: () => import('./views/Events.vue')
-    }
+    },
+    {
+      path: '/event/:eventId',
+      name: 'event',
+      component: () => import('./views/EventDetails.vue')
+    },
   ]
 })

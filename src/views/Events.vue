@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import db from '@/firebase/firebaseInit.js'
 import EventCard from '@/components/EventCard.vue'
 export default {
     name: 'events',
@@ -51,12 +52,25 @@ export default {
         }
     },
     components: {
-        UpcomingEvents,
         EventCard
     },
     created() {
         // To-DO pull all the past events from Firebase and add them to this.pastEvents array.
+        db.collection('events').where('date', '<', new Date().toLocaleDateString()).get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                let tempEvent = doc.data()
+                tempEvent.id = doc.id
+                this.pastEvents.push(tempEvent)
+            })
+        })
         // TO-DO pull all the upcoming events from Firebase and add them to this.upcomingEvents array.
+        db.collection('events').where('date', '>=', new Date().toLocaleDateString()).get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                let tempEvent = doc.data()
+                tempEvent.id = doc.id
+                this.upcomingEvents.push(tempEvent)
+            })
+        })
     }
 }
 </script>

@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import db from '@/firebase/firebaseInit.js'
 import EventCard from '@/components/EventCard.vue'
 import ContactForm from '@/components/ContactForm.vue'
 export default {
@@ -54,7 +55,14 @@ export default {
 	}
   },
   created() {
-	// TO-DO pull all the upcoming events from Firebase and add them to this.upcomingEvents array.
+	db.collection('events').where('date', '>=', new Date().toLocaleDateString()).get().then(querySnapshot => {
+		querySnapshot.forEach(doc => {
+			let tempEvent = doc.data()
+			tempEvent.id = doc.id
+			this.upcomingEvents.push(tempEvent)
+		})
+		console.log(this.upcomingEvents)
+	})
   },
   components: {
 	EventCard,
