@@ -4,11 +4,12 @@
             <v-container fill-height>
                 <v-layout align-center justify-center row fill-height v-if="!hover">
                     <v-flex sm12>
-                        <div>
-                            <h3>{{ event.name }}</h3>
-                            <p>{{ event.venue }}</p>
-                            <p>{{ event.date }}</p>
-                            <p>{{ event.time }}</p>
+                        <div class="event-details">
+                            <h2>{{ event.name }}</h2>
+                            <v-divider></v-divider>
+                            <p><span class="heading">Venue:</span> {{ event.venue }}</p>
+                            <p><span class="heading">Date:</span> {{ event.date }}</p>
+                            <p><span class="heading">Time:</span> {{ event.time }}</p>
                         </div>
                     </v-flex>
                 </v-layout>
@@ -16,12 +17,20 @@
                 <v-layout align-center justify-center row fill-height v-else>
                     <v-flex sm12>
                         <div>
-                            <p>Summary: {{ event.desc }}</p>
-                            <div>
+                            <p><span class="heading">Summary:</span> {{ event.desc }}</p>
+                            <div class="speakers">
                                 <ul>
                                     <li v-for="(speaker, index) in event.speakers" :key="index">
-                                        <img :src="speaker.imageUrl" :alt="`${speaker.name}\' photo`">
-                                        {{ speaker.name }}
+                                        <v-layout>
+                                            <v-flex xs4>
+                                                <img :src="speaker.imageUrl" :alt="`${speaker.name}\' photo`">
+                                            </v-flex>
+                                            <v-flex xs8>
+                                                <span class="speaker-name"> {{speaker.name }}</span>
+                                                <br>
+                                                <span> {{ speaker.details }} </span>
+                                            </v-flex>
+                                        </v-layout>
                                     </li>
                                 </ul>
                             </div>
@@ -57,5 +66,25 @@ export default {
 </script>
 
 <style>
-
+    .heading {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #484242;
+    }
+    .event-details p{
+        margin-top: 10px;
+    }
+    .speakers ul {
+        list-style: none;
+        padding: 0px;
+    }
+    .speakers ul li{
+        margin-bottom: 10px;
+    }
+    .speakers ul li img {
+        max-width: 70px;
+    }
+    .speakers ul li .speaker-name {
+        font-weight: 500;
+    }
 </style>

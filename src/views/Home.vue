@@ -73,6 +73,10 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Raleway:500|Roboto+Slab');
+	.website-name {
+		max-width: 900px;
+		margin: auto;
+	}
 	.website-name h1 {
 		font-size: 5rem;
 		text-align: center;
@@ -80,7 +84,8 @@ export default {
 		line-height: 100%;
 	}
 	.website-name p {
-		padding: 20px 300px;
+		/* padding: 20px 300px; */
+		margin-top: 15px;
 		text-align: center;
 		color: rgb(216, 216, 216);
 		font-family: 'Roboto Slab', serif;
